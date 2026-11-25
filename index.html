@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#081019">
+<meta name="description" content="A forecast of the always-on, teacher-facing classroom assistant. ETEC 523 Assignment 3, Ken Peterson.">
+<meta name="author" content="Ken Peterson">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Read the Room">
+<meta property="og:description" content="A forecast of the always-on, teacher-facing classroom assistant. ETEC 523, UBC MET.">
+<style>
+  html { -webkit-text-size-adjust: 100%; }
+  img, video, iframe { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Read the Room</title>
+
+<style>
+  /* self-hosted, shipped beside the page. nothing is fetched from anyone else. */
+  @font-face {
+    font-family: "Martian Mono";
+    src: url("fonts/martian-mono-var.woff2") format("woff2-variations");
+    font-weight: 300 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: Spectral;
+    src: url("fonts/spectral-400.woff2") format("woff2");
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: Spectral;
+    src: url("fonts/spectral-600.woff2") format("woff2");
+    font-weight: 600; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: Spectral;
+    src: url("fonts/spectral-400-italic.woff2") format("woff2");
+    font-weight: 400; font-style: italic; font-display: swap;
+  }
+</style>
+</head>
+<body>
+<style>
+  :root {
+    --ground: #081019;
+    --panel: #0E1A26;
+    --panel-2: #132432;
+    --line: #1B2D3D;
+    --line-hot: #2A4458;
+    --ink: #E2EEF6;
+    --ink-2: #A8C2D4;
+    --muted: #6E8CA2;
+    --amber: #55C2E0;          /* accent: blueprint cyan */
+    --amber-dim: #1E4D5E;
+    --cyan: #8FD6C9;           /* secondary */
+    --alert: #E0736B;
+    --mono: "Martian Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: Spectral, Georgia, "Iowan Old Style", "Times New Roman", serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- live status bar ---------- */
+
+  .status {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(8, 16, 25, .93);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .status-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 7px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .status .live { display: flex; align-items: center; gap: 7px; color: var(--amber); }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+
+  .readout { display: flex; gap: 14px; font-variant-numeric: tabular-nums; }
+  .readout span b { color: var(--ink-2); font-weight: 500; }
+
+  /* ---------- layout ---------- */
+
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 18px 90px; }
+
+  section { padding: 44px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+
+  h1, h2 { margin: 0; text-wrap: balance; }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(24px, 6.2vw, 36px);
+    line-height: 1.12;
+    letter-spacing: -.045em;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: clamp(18px, 4.4vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -.04em;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  p { margin: 0 0 16px; color: var(--ink-2); }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--ink); font-weight: 600; }
+
+  .chan {
+    display: block;
+    margin-bottom: 12px;
+    line-height: 1;
+  }
+
+  .chan .num {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    background: var(--amber);
+    color: var(--ground);
+    padding: 4px 16px 4px 9px;
+    display: inline-block;
+    clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%);
+    vertical-align: middle;
+  }
+
+  .chan i {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-style: normal;
+    margin-left: 9px;
+    vertical-align: middle;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .mast { padding: 54px 0 40px; border-bottom: 1px solid var(--line); }
+  .mast .kicker {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .mast .deck { font-size: 19px; color: var(--ink-2); margin-top: 18px; }
+  .byline {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .08em;
+    color: var(--muted);
+    margin-top: 24px;
+    text-transform: uppercase;
+  }
+
+  /* ---------- disclosure ---------- */
+
+  .disclose {
+    margin-top: 26px;
+    border: 1px solid var(--amber-dim);
+    border-left: 3px solid var(--amber);
+    background: rgba(85, 194, 224, .07);
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+
+  .disclose b { color: var(--amber); font-weight: 600; }
+
+  /* ---------- draft flags ---------- */
+
+  .draft {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--alert);
+    border: 1px dashed var(--alert);
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+
+  /* ---------- signal grid ---------- */
+
+  .grid { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+
+  .cell { background: var(--panel); padding: 14px 16px; display: flex; flex-direction: column; gap: 5px; }
+  .cell.empty { background: repeating-linear-gradient(135deg, var(--panel) 0 8px, var(--panel-2) 8px 16px); }
+
+  .cell .who {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .cell.empty .who { color: var(--alert); }
+  .cell .what { font-size: 14.5px; color: var(--ink-2); }
+
+  /* ---------- layer table ---------- */
+
+  .layers { display: flex; flex-direction: column; gap: 10px; }
+
+  .layer {
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--cyan);
+    background: var(--panel);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .layer.risk-high { border-top-color: var(--alert); }
+  .layer.risk-low { border-top-color: var(--amber); }
+
+  .layer h3 { margin: 0; font-family: var(--mono); font-size: 15px; font-weight: 600; }
+  .layer p { font-size: 14.5px; margin: 0; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border: 1px solid var(--line-hot);
+    color: var(--muted);
+    border-radius: 2px;
+  }
+
+  /* ---------- year spine ---------- */
+
+  .spine { border-left: 1px solid var(--line-hot); margin-left: 8px; padding-left: 20px; display: flex; flex-direction: column; gap: 22px; }
+
+  .mark { position: relative; }
+  .mark::before {
+    content: "";
+    position: absolute;
+    left: -25px;
+    top: 7px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--ground);
+    border: 2px solid var(--amber);
+  }
+
+  .mark .yr {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .12em;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .mark p { font-size: 14.5px; margin: 0; }
+
+  .falsify { margin-top: 26px; border: 1px solid var(--line); border-left: 3px solid var(--alert); padding: 14px 16px; }
+  .falsify h3 { margin: 0 0 8px; font-family: var(--mono); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--alert); font-weight: 600; }
+  .falsify p { font-size: 14.5px; margin: 0; }
+
+  /* ---------- the reveal ---------- */
+
+  #reveal { border-top: 2px solid var(--amber); }
+
+  .panel-box {
+    border: 1px solid var(--line-hot);
+    background: var(--panel);
+    margin-top: 18px;
+  }
+
+  .panel-head {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .meters { padding: 16px 16px 6px; display: flex; flex-direction: column; gap: 16px; }
+
+  .meter { display: flex; flex-direction: column; gap: 7px; }
+
+  .meter .top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .meter .name {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .meter .val {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .06em;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .meter .val b { color: var(--amber); font-weight: 600; }
+
+  .track {
+    height: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--amber);
+    border-radius: 0 3px 3px 0;
+    width: 0%;
+    transition: width .5s ease;
+  }
+
+  .meter .basis { font-size: 12.5px; color: var(--muted); font-family: var(--mono); line-height: 1.45; }
+
+  details.raw { border-top: 1px solid var(--line); }
+  details.raw summary {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 11px 16px;
+    cursor: pointer;
+  }
+  details.raw summary::-webkit-details-marker { color: var(--amber); }
+
+  .metrics { display: flex; flex-direction: column; }
+
+  .metric {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+
+  .metric:last-child { border-bottom: none; }
+  .metric .k { color: var(--ink-2); }
+  .metric .v { font-family: var(--mono); color: var(--amber); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ---------- navigation between map and page ---------- */
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  section, header.mast { scroll-margin-top: 46px; }
+
+  a.seg { text-decoration: none; cursor: pointer; }
+  a.seg:hover .nm, a.seg:focus-visible .nm { color: var(--ink); }
+  a.seg:hover .pc { color: var(--amber); }
+  a.seg:focus-visible { outline: 1px solid var(--cyan); outline-offset: -1px; }
+
+  .backlink {
+    float: right;
+    display: none;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    text-decoration: none;
+    border: 1px solid var(--amber);
+    border-radius: 2px;
+    padding: 2px 7px;
+    margin-left: 10px;
+    background: rgba(85, 194, 224, .09);
+  }
+
+  body.seen-reveal .backlink {
+    display: inline-block;
+    animation: backpulse 3.2s ease-in-out infinite;
+  }
+
+  @keyframes backpulse {
+    0%, 100% {
+      background: rgba(85, 194, 224, .08);
+      box-shadow: 0 0 0 0 rgba(85, 194, 224, 0);
+    }
+    50% {
+      background: rgba(85, 194, 224, .24);
+      box-shadow: 0 0 10px 0 rgba(85, 194, 224, .28);
+    }
+  }
+
+  .backlink:hover, .backlink:focus-visible {
+    background: var(--amber);
+    color: var(--ground);
+    animation: none;
+  }
+
+  .backlink:focus-visible { outline: 1px solid var(--cyan); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.seen-reveal .backlink { animation: none; background: rgba(85, 194, 224, .20); }
+  }
+
+  /* ---------- attention map ---------- */
+
+  .mapwrap { padding: 4px 16px 16px; }
+
+  .maphead {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .pagemap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border: 1px solid var(--line);
+    padding: 3px;
+    background: var(--ground);
+  }
+
+  .seg {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 10px;
+    border-left: 3px solid transparent;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .04em;
+    color: var(--ink-2);
+    min-height: 26px;
+    overflow: hidden;
+  }
+
+  .seg .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-2); }
+  .seg .pc { color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* once the fill gets bright, flip the text to the dark ground so it stays readable */
+  .seg.inv .nm, .seg.inv .pc { color: var(--ground); }
+  .seg.inv .nm { font-weight: 600; }
+  .seg.inv .pc { opacity: .75; }
+
+  .seg.cold { border-left-color: var(--line-hot); }
+  .seg.warm { border-left-color: var(--amber-dim); }
+  .seg.hot { border-left-color: var(--amber); }
+
+  .maplegend {
+    display: flex;
+    gap: 14px;
+    margin-top: 9px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+
+  .maplegend span { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 18px; height: 8px; border: 1px solid var(--line); }
+
+  .nudge {
+    border-top: 1px solid var(--line-hot);
+    padding: 16px;
+    background: rgba(143, 214, 201, .07);
+  }
+
+  .nudge .label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .nudge p { color: var(--ink); font-size: 15.5px; margin: 0; }
+
+  .turn {
+    margin-top: 24px;
+    border: 1px solid var(--amber);
+    border-left: 4px solid var(--amber);
+    background: rgba(85, 194, 224, .08);
+    padding: 20px 18px;
+  }
+
+  .turn .label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .turn p { color: var(--ink); font-size: 16.5px; line-height: 1.5; margin: 0 0 12px; }
+  .turn p:last-child { margin-bottom: 0; color: var(--ink-2); font-size: 15px; }
+
+  .inference {
+    border-top: 1px solid var(--line-hot);
+    background: rgba(85, 194, 224, .08);
+    padding: 16px;
+  }
+
+  .inference .label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .inference p { color: var(--ink); font-size: 15.5px; margin: 0; }
+
+  .integrity {
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--muted);
+    border: 1px dashed var(--line-hot);
+    padding: 12px 14px;
+  }
+
+  /* ---------- close ---------- */
+
+  .ask {
+    border: 1px solid var(--line-hot);
+    background: var(--panel-2);
+    padding: 18px;
+    margin-top: 20px;
+  }
+  .ask p { margin: 0; color: var(--ink); }
+
+  footer {
+    padding: 30px 0 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  a { color: var(--cyan); text-underline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dot { animation: none; }
+    * { transition: none !important; }
+  }
+
+  @media (max-width: 420px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 15px 80px; }
+    .readout { gap: 10px; }
+  }
+</style>
+
+<div class="status">
+  <div class="status-inner">
+    <span class="live"><span class="dot"></span>Sensing</span>
+    <span class="readout">
+      <span>T <b id="r-time">0:00</b></span>
+      <span>Depth <b id="r-depth">0%</b></span>
+      <span>Sig <b id="r-events">0</b></span>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="mast" data-sec="masthead">
+    <div class="kicker">ETEC 523 &middot; Assignment 3 &middot; Forecast</div>
+    <h1>Read the Room</h1>
+    <p class="deck">In one profession after another, the person in the room now works alongside a system that notices what they cannot. Teaching is still mostly on its own. That changes sometime in the early 2030s, and the question is what we do about it before it does.</p>
+    <div class="byline">Ken Peterson &middot; November 2026</div>
+
+    <div class="disclose" data-sec="disclosure">
+      <b>Notice:</b> this page is watching how you read it. Dwell time per section, scrolling, pauses, what you skip. Nothing is stored, nothing is transmitted, and it all disappears when you close the tab. You will see what it collected at the end.
+    </div>
+  </header>
+
+  <section data-sec="caveat">
+    <span class="chan"><span class="num">CH 01</span><i>Before we start</i></span>
+    <span class="draft">Draft</span>
+    <h2>A forecast, not an endorsement</h2>
+    <p>I think some version of an always-on classroom assistant is coming, and sooner than most of us expect. A lot of adjacent professions already have one. That part I am fairly confident about.</p>
+    <p>I am much less confident it will be good for education. Some versions I would welcome in my son's Grade 6 classroom tomorrow. Others I would fight. The difference comes down to design decisions nobody is making in public yet.</p>
+    <p>So this is a forecast rather than a pitch. I am interested in it precisely because it is probably coming in some form, and because the form is still open. The time to interrogate a technology is while its shape is undecided, not after the purchase orders go out.</p>
+  </section>
+
+  <section data-sec="analogs">
+    <span class="chan"><span class="num">CH 02</span><i>The empty column</i></span>
+    <span class="draft">Draft</span>
+    <h2>Other professions already have this</h2>
+    <p><strong>[Your words here.]</strong> The set below is the evidence that this is a feasibility claim rather than a wish. One short embedded clip goes here, ideally a HUD or an ambient scribe rather than anything that targets.</p>
+    <div class="grid">
+      <div class="cell"><span class="who">Clinic</span><span class="what">Ambient scribes listen to the visit and draft the note. The clinician never stops looking at the patient.</span></div>
+      <div class="cell"><span class="who">Ward</span><span class="what">Deterioration scoring watches every patient at once and tells one nurse who to see next.</span></div>
+      <div class="cell"><span class="who">Contact centre</span><span class="what">Real-time assist listens to a live call and coaches the agent mid-sentence.</span></div>
+      <div class="cell"><span class="who">Cockpit</span><span class="what">Threshold alerting stays silent for hours, then interrupts hard, once.</span></div>
+      <div class="cell"><span class="who">Sideline</span><span class="what">Athlete telemetry reaches the coach, not the athlete. A human still decides.</span></div>
+      <div class="cell empty"><span class="who">Classroom</span><span class="what">Nothing live. One adult, thirty learners, and whatever the adult can hold in their head.</span></div>
+    </div>
+  </section>
+
+  <section data-sec="load">
+    <span class="chan"><span class="num">CH 03</span><i>The teacher's working memory</i></span>
+    <span class="draft">Draft &middot; carries the argument</span>
+    <h2>Thirty things to remember</h2>
+    <p><strong>[Your words here.]</strong> Cognitive load theory, pointed at the teacher instead of the learner. The field has spent forty years on the student's working memory and almost none on the working memory of the person running the room.</p>
+    <p>Anchor it on the formative assessment moment: you watch a kid finally get it at 10:40. You either stop the lesson to record it or you trust that you will remember at 3pm. Nobody remembers at 3pm. The assessment happened and the evidence evaporated.</p>
+  </section>
+
+  <section data-sec="layers">
+    <span class="chan"><span class="num">CH 04</span><i>Input layers</i></span>
+    <span class="draft">Draft &middot; comment magnet</span>
+    <h2>What a room could sense</h2>
+    <p><strong>[Your words here.]</strong> Always listening is the least interesting and most legally fraught way to build this. Four layers, each with a different privacy cost and a different distance from today.</p>
+    <div class="layers">
+      <div class="layer risk-high">
+        <h3>Audio and speech</h3>
+        <p>Talk-time ratios, questioning patterns, who has not spoken. Decibel-only is nearly free; transcription is the hardest sell in a room full of minors.</p>
+        <div class="tags"><span class="tag">High privacy cost</span><span class="tag">Partly commercial</span></div>
+      </div>
+      <div class="layer risk-low">
+        <h3>Digital activity</h3>
+        <p>Which prompt is open, where responses stalled, how long a task actually took. This already exists in the systems schools have bought.</p>
+        <div class="tags"><span class="tag">Low privacy cost</span><span class="tag">Here now</span></div>
+      </div>
+      <div class="layer risk-low">
+        <h3>Environment</h3>
+        <p>Occupancy, temperature, air quality, light. No personal data at all, and off-the-shelf hardware. The dull layer that quietly explains the 2pm slump.</p>
+        <div class="tags"><span class="tag">Near-zero privacy cost</span><span class="tag">Here now</span></div>
+      </div>
+      <div class="layer risk-high">
+        <h3>Vision</h3>
+        <p>Posture, movement density, hand-raising, where the teacher stood. Research prototypes only, and the layer boards will refuse longest.</p>
+        <div class="tags"><span class="tag">Highest privacy cost</span><span class="tag">Research only</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section data-sec="when">
+    <span class="chan"><span class="num">CH 05</span><i>Bottlenecks and enablers</i></span>
+    <span class="draft">Draft</span>
+    <h2>Why it is not here yet</h2>
+    <p><strong>[Your words here.]</strong> Three things hold it back: the signals live in systems that do not talk to each other, continuous multimodal capture is too slow and too expensive to send to the cloud, and nobody has the institutional appetite.</p>
+    <p>Three things resolve it: inference that runs on the device and discards the raw signal, small models trained on pedagogical patterns rather than general language, and sensor standards that let one assistant read a room it did not ship with.</p>
+  </section>
+
+  <section data-sec="glasses">
+    <span class="chan"><span class="num">CH 06</span><i>The interface</i></span>
+    <span class="draft">Draft &middot; the surprise</span>
+    <h2>The teacher wears the glasses</h2>
+    <p><strong>[Your words here.]</strong> Every prompt we have discussed has to land somewhere, and a phone in a teacher's hand is a teacher looking at a phone. The entire public argument about glasses in schools assumes the student is wearing them. Flip it.</p>
+  </section>
+
+  <section data-sec="trade">
+    <span class="chan"><span class="num">CH 07</span><i>The trade</i></span>
+    <span class="draft">Draft &middot; carries the argument</span>
+    <h2>The relief and the record are the same signal</h2>
+    <p><strong>[Your words here.]</strong> On-device processing protects students. It does nothing for teachers, because the metadata is the surveillance. A system can discard every second of audio and still produce a permanent record of how long you talked, where you stood, and who you never got to.</p>
+    <p>The union objection is not recording. It is continuous derived metrics about a professional, generated by a system that professional did not choose.</p>
+  </section>
+
+  <section data-sec="watch">
+    <span class="chan"><span class="num">CH 08</span><i>Watch list</i></span>
+    <span class="draft">Draft &middot; the takeaway</span>
+    <h2>How you will know if I am right</h2>
+    <div class="spine">
+      <div class="mark">
+        <span class="yr">BY 2029</span>
+        <p>Board AI policy written by procurement rather than by academic integrity. Wifi specified per room. A vendor shipping processing that never leaves the building.</p>
+      </div>
+      <div class="mark">
+        <span class="yr">BY 2030</span>
+        <p>Teachers buying their own glasses, the way they bought their own smartphones a decade before any board had a policy.</p>
+      </div>
+      <div class="mark">
+        <span class="yr">BY 2032</span>
+        <p>Collective agreement language about derived classroom metrics. The first grievance. A classroom talk analytics product moving from post-lesson review to live, in-lesson prompting.</p>
+      </div>
+    </div>
+    <div class="falsify">
+      <h3>And how you will know I am wrong</h3>
+      <p>A serious breach involving classroom audio. A province banning capture outright. Glasses stalling a second time the way they did after 2013. Or the simplest one: the cost per classroom never pencils out.</p>
+    </div>
+  </section>
+
+  <section id="reveal" data-sec="reveal">
+    <span class="chan"><span class="num">CH 09</span><i>One more thing</i></span>
+    <h2>While you were reading</h2>
+    <p>You were told at the top of this page. You probably forgot inside of a minute. That is not a trick, it is the mechanism: every ambient system arrives with a notice nobody finishes reading.</p>
+
+    <div class="panel-box">
+      <div class="panel-head"><span>Session readout</span><span id="r-stamp">--</span></div>
+      <div class="meters" id="meters"></div>
+      <div class="mapwrap">
+        <div class="maphead">Where your attention went</div>
+        <div class="pagemap" id="pagemap"></div>
+        <div class="maplegend">
+          <span><i class="swatch" style="background:var(--panel-2)"></i>Skimmed</span>
+          <span><i class="swatch" style="background:var(--amber-dim)"></i>Read</span>
+          <span><i class="swatch" style="background:var(--amber)"></i>Dwelled</span>
+        </div>
+      </div>
+      <div class="nudge">
+        <span class="label">Suggested</span>
+        <p id="nudge">Keep reading.</p>
+      </div>
+      <details class="raw">
+        <summary>Raw signals</summary>
+        <div class="metrics" id="metrics"></div>
+      </details>
+      <div class="inference">
+        <span class="label">Derived</span>
+        <p id="inference">Still reading.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:18px"><strong>Notice what just happened there.</strong> Nobody measured your attention. A machine decided what attention looks like, named it, scored it out of 100, and showed you the number as though it were a fact about you. Those three words are my inventions. So are the formulas. That is the part worth worrying about, and it is the part that will arrive without anyone voting on it.</p>
+
+    <p class="integrity">INTEGRITY: everything above was computed in your browser. No network request, no storage, no analytics, no third-party fonts. Refresh and it is gone. The source is public, and you are welcome to check.</p>
+
+    <div class="turn">
+      <span class="label">Now put it in a classroom</span>
+      <p>Imagine you could see this for a reading you assigned. Not a quiz score afterwards, but which paragraphs your students moved through quickly and which ones they stayed with. Would you use it to send them back to the part they skipped?</p>
+      <p>And the harder half: imagine someone could see the same map of how you taught, and you were not the one who decided which parts got measured.</p>
+    </div>
+  </section>
+
+  <section data-sec="close">
+    <span class="chan"><span class="num">CH 10</span><i>Close</i></span>
+    <span class="draft">Draft</span>
+    <h2>Still open</h2>
+    <p><strong>[Your words here.]</strong> Short return to the caveat, then the question.</p>
+    <div class="ask">
+      <p>Looking at the four input layers: which one would you accept in your own classroom tomorrow, and which one would you refuse outright? I am more interested in where you draw the line than whether you draw it.</p>
+    </div>
+    <footer>ETEC 523 &middot; Mobile Intelligence &middot; UBC MET</footer>
+  </section>
+
+</div>
+
+<script>
+  (function () {
+    var started = Date.now();
+    var events = 0;
+    var maxDepth = 0;
+    var reversals = 0;
+    var lastY = window.scrollY;
+    var awayMs = 0;
+    var awaySince = null;
+    var taps = 0;
+    var fastSkims = 0;
+    var dwell = {};
+    var visible = {};
+    var revealSeen = false;
+
+    var secs = Array.prototype.slice.call(document.querySelectorAll('[data-sec]'));
+    secs.forEach(function (el) { dwell[el.dataset.sec] = 0; });
+
+    function tickDwell() {
+      var now = Date.now();
+      Object.keys(visible).forEach(function (k) {
+        if (visible[k]) { dwell[k] += now - (visible[k].t || now); visible[k].t = now; }
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        var now = Date.now();
+        entries.forEach(function (e) {
+          var k = e.target.dataset.sec;
+          if (e.isIntersecting) {
+            visible[k] = { t: now };
+            events++;
+            if (k === 'reveal' && !revealSeen) {
+              revealSeen = true;
+              document.body.classList.add('seen-reveal');
+              render();
+            }
+          } else if (visible[k]) {
+            dwell[k] += now - visible[k].t;
+            visible[k] = null;
+          }
+        });
+      }, { threshold: 0.35 });
+      secs.forEach(function (el) { io.observe(el); });
+    }
+
+    var lastScrollT = Date.now();
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY;
+      var now = Date.now();
+      var dt = Math.max(now - lastScrollT, 1);
+      var v = Math.abs(y - lastY) / dt;
+      if (v > 3) { fastSkims++; }
+      if (y < lastY - 60) { reversals++; }
+      lastScrollT = now;
+      lastY = y;
+
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      var d = h > 0 ? Math.min(100, Math.round((y / h) * 100)) : 0;
+      if (d > maxDepth) { maxDepth = d; }
+      events++;
+    }, { passive: true });
+
+    document.addEventListener('click', function () { taps++; events++; });
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { awaySince = Date.now(); tickDwell(); }
+      else if (awaySince) { awayMs += Date.now() - awaySince; awaySince = null; }
+    });
+
+    function fmt(ms) {
+      var s = Math.round(ms / 1000);
+      if (s < 60) { return s + 's'; }
+      return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+    }
+
+    function elapsed() { return Date.now() - started - awayMs; }
+
+    setInterval(function () {
+      tickDwell();
+      var t = Math.round(elapsed() / 1000);
+      document.getElementById('r-time').textContent = Math.floor(t / 60) + ':' + ('0' + (t % 60)).slice(-2);
+      document.getElementById('r-depth').textContent = maxDepth + '%';
+      document.getElementById('r-events').textContent = events;
+      if (revealSeen) { render(); }
+    }, 1000);
+
+    function row(k, v) {
+      return '<div class="metric"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
+    }
+
+    function clamp(n) { return Math.max(0, Math.min(100, Math.round(n))); }
+
+    function scores() {
+      var mins = elapsed() / 60000;
+      var bodyDwell = ['caveat','analogs','load','layers','when','glasses','trade','watch','close']
+        .reduce(function (a, k) { return a + (dwell[k] || 0); }, 0);
+      var seen = Object.keys(dwell).filter(function (k) { return (dwell[k] || 0) > 1200; }).length;
+
+      // Attention: sustained reading, re-reading, not skimming
+      var att = clamp(
+        Math.min(55, (bodyDwell / 1000) * 0.9) +
+        Math.min(20, reversals * 5) +
+        Math.min(15, seen * 1.6) +
+        (maxDepth > 85 ? 10 : 0) -
+        Math.min(25, fastSkims * 2.5)
+      );
+
+      // Interaction: deliberate acts, not just presence
+      var inter = clamp(
+        Math.min(35, taps * 9) +
+        Math.min(35, maxDepth * 0.35) +
+        Math.min(20, seen * 2.2) +
+        (revealSeen ? 10 : 0)
+      );
+
+      // Distraction: leaving, racing, bouncing
+      var dist = clamp(
+        Math.min(45, (awayMs / 1000) * 3) +
+        Math.min(35, fastSkims * 3.5) +
+        (mins > 0.5 && bodyDwell / 1000 < mins * 18 ? 20 : 0)
+      );
+
+      return { attention: att, interaction: inter, distraction: dist };
+    }
+
+    function band(n) {
+      if (n >= 67) { return 'High'; }
+      if (n >= 34) { return 'Moderate'; }
+      return 'Low';
+    }
+
+    function meter(name, n, basis) {
+      return '<div class="meter">' +
+        '<div class="top"><span class="name">' + name + '</span>' +
+        '<span class="val">' + band(n) + ' &middot; <b>' + n + '</b>/100</span></div>' +
+        '<div class="track"><span class="fill" style="width:' + n + '%"></span></div>' +
+        '<div class="basis">' + basis + '</div>' +
+        '</div>';
+    }
+
+    /* ---------- attention map ---------- */
+
+    var MAP_ORDER = ['caveat','analogs','load','layers','when','glasses','trade','watch'];
+
+    // give every mapped section an id so the map can link to it,
+    // and drop a return link into each channel header
+    MAP_ORDER.forEach(function (k) {
+      var el = document.querySelector('[data-sec="' + k + '"]');
+      if (!el) { return; }
+      if (!el.id) { el.id = k; }
+      var chan = el.querySelector('.chan');
+      if (chan && !chan.querySelector('.backlink')) {
+        var back = document.createElement('a');
+        back.className = 'backlink';
+        back.href = '#reveal';
+        back.textContent = '\u2193 Back to sensing data';
+        back.setAttribute('aria-label', 'Back to the sensing data readout');
+        chan.insertBefore(back, chan.firstChild);
+      }
+    });
+
+    var SECTION_META = {
+      caveat:  { label: '01 Before we start', pitch: 'the caveat, because it tells you what this is and is not' },
+      analogs: { label: '02 The empty column', pitch: 'the five other professions, because that is the whole feasibility case' },
+      load:    { label: '03 Thirty things to remember', pitch: 'the bit about 10:40, which is the reason I wrote any of this' },
+      layers:  { label: '04 What a room could sense', pitch: 'the four input layers, because that is the part worth arguing with' },
+      when:    { label: '05 Why it is not here yet', pitch: 'the bottlenecks, because they are why this is a forecast and not a wish' },
+      glasses: { label: '06 Who wears the glasses', pitch: 'the bit about who is wearing them, which is the one thing here that surprised me' },
+      trade:   { label: '07 The trade', pitch: 'the trade, because it is the only part of this I am certain about' },
+      watch:   { label: '08 Watch list', pitch: 'the watch list, so you can come back in 2029 and tell me I was wrong' }
+    };
+
+    var WORDS = {};
+    MAP_ORDER.forEach(function (k) {
+      var el = document.querySelector('[data-sec="' + k + '"]');
+      var txt = el ? (el.innerText || el.textContent || '') : '';
+      WORDS[k] = Math.max(40, txt.trim().split(/\s+/).length);
+    });
+
+    function expectedMs(k) { return (WORDS[k] / 230) * 60000; }
+
+    function intensity(k) {
+      var exp = expectedMs(k);
+      if (!exp) { return 0; }
+      return Math.max(0, Math.min(1, (dwell[k] || 0) / exp));
+    }
+
+    function renderMap() {
+      var box = document.getElementById('pagemap');
+      if (!box) { return; }
+      var totalWords = MAP_ORDER.reduce(function (a, k) { return a + WORDS[k]; }, 0);
+
+      box.innerHTML = MAP_ORDER.map(function (k) {
+        var t = intensity(k);
+        var cls = t < 0.33 ? 'cold' : (t < 0.8 ? 'warm' : 'hot');
+        if (t > 0.45) { cls += ' inv'; }
+        var h = Math.max(26, Math.round((WORDS[k] / totalWords) * 300));
+        var alpha = (0.05 + t * 0.72).toFixed(3);
+        var pct = Math.round(t * 100);
+        return '<a class="seg ' + cls + '" href="#' + k + '" style="height:' + h + 'px;background:rgba(85,194,224,' + alpha + ')">' +
+          '<span class="nm">' + SECTION_META[k].label + '</span>' +
+          '<span class="pc">' + pct + '%</span></a>';
+      }).join('');
+    }
+
+    function renderNudge() {
+      var el = document.getElementById('nudge');
+      if (!el) { return; }
+
+      var scored = MAP_ORDER.map(function (k) { return { k: k, t: intensity(k) }; });
+      var skimmed = scored.filter(function (x) { return x.t < 0.33; })
+        .sort(function (a, b) { return a.t - b.t; });
+      var read = scored.filter(function (x) { return x.t >= 0.8; });
+
+      // what to send them back to, in order of what I actually want read
+      var priority = ['trade', 'load', 'layers', 'glasses', 'watch', 'analogs', 'when', 'caveat'];
+      var pick = null;
+      for (var i = 0; i < priority.length; i++) {
+        var cand = scored.filter(function (x) { return x.k === priority[i]; })[0];
+        if (cand && cand.t < 0.8) { pick = cand; break; }
+      }
+
+      var msg;
+      if (skimmed.length === 0 && read.length >= 6) {
+        msg = 'You actually read the whole thing, which almost nobody does. Nothing to send you back to, so instead: the part I would most like to be wrong about is the trade in section 07.';
+      } else if (skimmed.length === 0) {
+        msg = 'Nothing obviously skipped. If you have another minute, ' + SECTION_META[(pick || scored[0]).k].pitch + '.';
+      } else {
+        var worst = SECTION_META[skimmed[0].k].label.replace(/^\d+\s/, '');
+        msg = 'Looks like you moved quickly through ' + worst + '. No judgement, I skim too. ';
+        if (pick && pick.k !== skimmed[0].k) {
+          msg += 'But if you go back to one thing, make it ' + SECTION_META[pick.k].pitch + '.';
+        } else if (skimmed.length > 1) {
+          msg += 'Same for ' + SECTION_META[skimmed[1].k].label.replace(/^\d+\s/, '') + '. Either is worth two minutes.';
+        } else {
+          msg += 'Worth two minutes if you have them.';
+        }
+      }
+      el.textContent = msg;
+    }
+
+    function renderMeters() {
+      var box = document.getElementById('meters');
+      if (!box) { return; }
+      var sc = scores();
+      box.innerHTML =
+        meter('Attention', sc.attention,
+          'from: time in body sections, times you scrolled back, sections reached, skim bursts') +
+        meter('Interaction', sc.interaction,
+          'from: taps, scroll depth, sections reached, whether you got here at all') +
+        meter('Distraction', sc.distraction,
+          'from: time in other apps, fast scroll bursts, reading time against time elapsed');
+    }
+
+    function render() {
+      tickDwell();
+      renderMeters();
+      renderMap();
+      renderNudge();
+      var box = document.getElementById('metrics');
+      if (!box) { return; }
+
+      var now = new Date();
+      document.getElementById('r-stamp').textContent =
+        ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
+
+      var html = '';
+      html += row('Time on this page', fmt(elapsed()));
+      html += row('Time on the notice you agreed to', fmt(dwell.disclosure || 0));
+      html += row('Deepest scroll', maxDepth + '%');
+      html += row('Times you scrolled back up', reversals);
+      html += row('Sections you skimmed past', fastSkims > 0 ? fastSkims + ' bursts' : 'none detected');
+      html += row('Time on the privacy argument', fmt(dwell.trade || 0));
+      html += row('Time on the timeline', fmt(dwell.watch || 0));
+      html += row('Time away in another app', awayMs > 1500 ? fmt(awayMs) : 'none');
+      html += row('Taps', taps);
+      html += row('Read at', now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
+      box.innerHTML = html;
+
+      document.getElementById('inference').textContent = infer();
+    }
+
+    function infer() {
+      var d = dwell.disclosure || 0;
+      var trade = dwell.trade || 0;
+      var watch = dwell.watch || 0;
+      var layers = dwell.layers || 0;
+
+      if (d < 4000) {
+        return 'You spent ' + fmt(d) + ' on the notice telling you this page was watching, and then kept reading anyway. That is the entire consent model for ambient technology, demonstrated on yourself.';
+      }
+      if (watch > trade * 1.4) {
+        return 'You lingered on the timeline and moved quickly through the privacy argument. Reading you as someone who has accepted that this is coming and wants to know when, not whether.';
+      }
+      if (trade > watch * 1.4) {
+        return 'You spent longer on what this costs teachers than on when it arrives. Reading you as someone with a stake in the room rather than in the roadmap.';
+      }
+      if (layers > trade && layers > watch) {
+        return 'Your attention went to what a room could sense. Reading you as a builder rather than a critic, which is a useful disposition and also exactly how this gets built without anyone asking whether it should.';
+      }
+      return 'Even attention across the argument. No strong signal, which is itself a finding: a system like this would keep watching until it had one.';
+    }
+
+    window.addEventListener('pagehide', function () { tickDwell(); });
+  })();
+</script>
+
+</body>
+</html>
