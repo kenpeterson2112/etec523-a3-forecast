@@ -189,6 +189,62 @@
   .mast .deck { font-size: 19px; color: var(--ink-2); margin-top: 18px; }
   .mast .deck + .deck { margin-top: 0; }
 
+  /* ---------- photo and video ---------- */
+
+  .photo { margin: 22px 0; }
+  .photo img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+  .photo figcaption, .video-note {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .06em;
+    color: var(--muted);
+  }
+  .photo figcaption { margin-top: 8px; }
+  .photo figcaption a { color: var(--muted); }
+
+  .video {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    margin: 4px 0 22px;
+    border: 1px solid var(--line-hot);
+    background: var(--panel);
+  }
+  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .video-play {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    border: 0;
+    background: repeating-linear-gradient(135deg, var(--panel) 0 8px, var(--panel-2) 8px 16px);
+    color: var(--ink);
+    cursor: pointer;
+    text-align: center;
+  }
+  .video-play:focus-visible { outline: 1px solid var(--cyan); outline-offset: -3px; }
+  .video-icon {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: var(--amber);
+    position: relative;
+  }
+  .video-icon::after {
+    content: "";
+    position: absolute;
+    left: 22px; top: 17px;
+    border-left: 15px solid var(--ground);
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+  }
+  .video-play:hover .video-icon { background: var(--cyan); }
+  .video-title { font-family: var(--mono); font-size: 14px; font-weight: 600; }
+  .video-meta { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-2); }
+
   /* ---------- references ---------- */
 
   .refs h2 { margin-bottom: 18px; }
@@ -660,33 +716,44 @@
     <div class="kicker">ETEC 523 &middot; Assignment 3 &middot; Forecast</div>
     <h1>Read the Room</h1>
     <p class="deck">Classrooms are complicated and often hectic environments. At any given time, there could be a dozen students struggling with a task, five students ready to move on, and a handful of others at various other levels of productivity or well-being. It is up to the teacher to read the room and make quick decisions - up to 1,500 per day - on the next move (Klein, 2021). These decisions are mostly made in the moment with whatever data they can recall and whatever information they can glean from their surroundings.</p>
-    <p class="deck">Many other professions have similarly hectic and high pressure environments, such as emergency rooms, 24/7 call centers, and fighter jet cockpits. The difference is that the humans operating in these environments often have automated, ambient systems feeding them intelligence so they can make well-informed decisions in realtime based on data and telemetrics while teachers are still mostly on their own.</p>
+    <figure class="photo">
+      <img src="images/classroom.jpg" width="1400" height="933" alt="A high school English teacher leans over a student's desk to check their work." loading="lazy">
+      <figcaption>Photo: Allison Shelley/The Verbatim Agency for EDUimages, <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a></figcaption>
+    </figure>
+    <p class="deck">Many other professions have similarly hectic and high pressure environments, such as emergency rooms, 24/7 call centers, and fighter jet cockpits. The difference is that the humans operating in these environments increasingly have <strong>automated, ambient systems</strong> feeding them intelligence so they can make well-informed decisions in realtime based on data and telemetrics while teachers are still mostly on their own.</p>
+    <p class="deck">The first 1:22 of this video provides a nice succinct overview of what an Ambient Intelligent Assistance does and how it leverages a mesh of devices to collect data and serve it up to the user (Arm, n.d.).</p>
+    <div class="video" data-yt="r5-t9DnqLnI" data-end="82">
+      <button type="button" class="video-play" aria-label="Play video: What is Ambient Intelligence? (Arm), first 1:22">
+        <span class="video-icon" aria-hidden="true"></span>
+        <span class="video-title">What is Ambient Intelligence?</span>
+        <span class="video-meta">Arm &middot; YouTube &middot; plays 0:00&ndash;1:22</span>
+        <span class="video-note">Loads from YouTube only when you press play</span>
+      </button>
+    </div>
     <p class="deck">This forecast will explore the likelihood, benefits, and risks of systems like these becoming available to teachers and what it might mean for teaching as a profession.</p>
-    <div class="byline">Ken Peterson &middot; November 2026</div>
 
     <div class="disclose" data-sec="disclosure">
-      <b>Notice:</b> this page is tracking your interactions with it. Nothing is stored, nothing is transmitted, and it all disappears when you close the tab, but you will see what it collected at the end.
+      <b>Full Disclosure:</b> this page is tracking your interactions with it. Nothing is stored, nothing is transmitted anywhere, and it all disappears when you close the tab. At the end of this page, you will see what it collected and understand why I included this.
     </div>
   </header>
 
   <section data-sec="analogs">
-    <span class="chan"><span class="num">CH 01</span><i>The empty column</i></span>
+    <span class="chan"><span class="num">CH 01</span><i>Current State in other Professions</i></span>
     <h2>Existing Ambient Intelligence Systems</h2>
-    <p><strong>[Your words here.]</strong> The set below is the evidence that this is a feasibility claim rather than a wish. One short embedded clip goes here, ideally a HUD or an ambient scribe rather than anything that targets.</p>
+    <p>The examples below provide evidence that an Ambient Classroom Assistant is feasible. One of the fastest growing use cases in health care is <a href="https://www.youtube.com/watch?v=mPpnwg-BWZY">ambient scribing tools</a> that track conversations and other data inputs to help doctors and health care workers accurately track information in realtime (VoiceboxMD, n.d.).</p>
     <div class="grid">
-      <div class="cell"><span class="who">Clinic</span><span class="what">Ambient scribes listen to the visit and draft the note (Tierney et al., 2024). The clinician never stops looking at the patient.</span></div>
-      <div class="cell"><span class="who">Ward</span><span class="what">Deterioration scoring watches every patient at once and tells one nurse who to see next (Escobar et al., 2020).</span></div>
-      <div class="cell"><span class="who">Contact centre</span><span class="what">Real-time assist listens to a live call and coaches the agent mid-sentence (Brynjolfsson et al., 2025).</span></div>
-      <div class="cell"><span class="who">Cockpit</span><span class="what">Threshold alerting stays silent for hours, then interrupts hard, once.</span></div>
-      <div class="cell"><span class="who">Sideline</span><span class="what">Athlete telemetry reaches the coach, not the athlete. A human still decides.</span></div>
+      <div class="cell"><span class="who">Clinic</span><span class="what">Ambient scribes listen to the visit and draft the note (Tierney et al., 2024). The clinician can devote more attention to the patient.</span></div>
+      <div class="cell"><span class="who">Ward</span><span class="what">Deterioration scoring watches every patient at once and tells one nurse who to see next and which patients need care most urgently (Escobar et al., 2020).</span></div>
+      <div class="cell"><span class="who">Contact centre</span><span class="what">Real-time assist listens to a live call and coaches the agent mid-sentence while serving up key information to agents and managers (Brynjolfsson et al., 2025).</span></div>
+      <div class="cell"><span class="who">Cockpit</span><span class="what">Threshold alerting systems provide realtime visual telemetry to pilots who can keep their hands on the controls at all times.</span></div>
+      <div class="cell"><span class="who">Sideline</span><span class="what">Athlete telemetry reaches the coach or trainer, not the athlete. The data can be used to improve performance or prevent injury.</span></div>
       <div class="cell empty"><span class="who">Classroom</span><span class="what">Nothing live. One adult, thirty learners, and whatever the adult can hold in their head.</span></div>
     </div>
   </section>
 
   <section data-sec="load">
-    <span class="chan"><span class="num">CH 02</span><i>The teacher's working memory</i></span>
-    <span class="draft">Draft &middot; carries the argument</span>
-    <h2>Thirty things to remember</h2>
+    <span class="chan"><span class="num">CH 02</span><i>The limits of working memory</i></span>
+    <h2>Data overwhelm and Decision Fatigue</h2>
     <p><strong>[Your words here.]</strong> Cognitive load theory (Sweller, 1988), pointed at the teacher instead of the learner. The field has spent forty years on the student's working memory and almost none on the working memory of the person running the room (Feldon, 2007).</p>
     <p>Anchor it on the formative assessment moment: you watch a kid finally get it at 10:40. You either stop the lesson to record it or you trust that you will remember at 3pm. Nobody remembers at 3pm. The assessment happened and the evidence evaporated.</p>
   </section>
@@ -800,7 +867,7 @@
 
     <p style="margin-top:18px"><strong>Notice what just happened there.</strong> Nobody measured your attention. A machine decided what attention looks like, named it, scored it out of 100, and showed you the number as though it were a fact about you. Those three words are my inventions. So are the formulas. That is the part worth worrying about, and it is the part that will arrive without anyone voting on it.</p>
 
-    <p class="integrity">INTEGRITY: everything above was computed in your browser. No network request, no storage, no analytics, no third-party fonts. Refresh and it is gone. The source is public, and you are welcome to check.</p>
+    <p class="integrity">INTEGRITY: everything above was computed in your browser. No network request, no storage, no analytics, no third-party fonts. Refresh and it is gone. The photo is served from this site, and the video loads from YouTube only if you press play. The source is public, and you are welcome to check.</p>
 
     <div class="turn">
       <span class="label">Now put it in a classroom</span>
@@ -832,6 +899,7 @@
     <h2>References</h2>
     <ul>
       <li>Ahuja, K., Kim, D., Xhakaj, F., Varga, V., Xie, A., Zhang, S., Townsend, J. E., Harrison, C., Ogan, A., &amp; Agarwal, Y. (2019). EduSense: Practical classroom sensing at scale. <i>Proceedings of the ACM on Interactive, Mobile, Wearable and Ubiquitous Technologies, 3</i>(3), Article 71. <a href="https://doi.org/10.1145/3351229">https://doi.org/10.1145/3351229</a></li>
+      <li>Arm. (n.d.). <i>What is ambient intelligence?</i> [Video]. YouTube. <a href="https://www.youtube.com/watch?v=r5-t9DnqLnI">https://www.youtube.com/watch?v=r5-t9DnqLnI</a></li>
       <li>Brynjolfsson, E., Li, D., &amp; Raymond, L. (2025). Generative AI at work. <i>The Quarterly Journal of Economics, 140</i>(2), 889&ndash;942. <a href="https://doi.org/10.1093/qje/qjae044">https://doi.org/10.1093/qje/qjae044</a></li>
       <li>Demszky, D., Liu, J., Hill, H. C., Jurafsky, D., &amp; Piech, C. (2024). Can automated feedback improve teachers' uptake of student ideas? Evidence from a randomized controlled trial in a large-scale online course. <i>Educational Evaluation and Policy Analysis, 46</i>(3), 483&ndash;505. <a href="https://doi.org/10.3102/01623737231169270">https://doi.org/10.3102/01623737231169270</a></li>
       <li>Escobar, G. J., Liu, V. X., Schuler, A., Lawson, B., Greene, J. D., &amp; Kipnis, P. (2020). Automated identification of adults at risk for in-hospital clinical deterioration. <i>New England Journal of Medicine, 383</i>(20), 1951&ndash;1960. <a href="https://doi.org/10.1056/NEJMsa2001090">https://doi.org/10.1056/NEJMsa2001090</a></li>
@@ -840,6 +908,7 @@
       <li>Lardinois, F. (2015, January 15). Google Glass Explorer program shuts down, team now reports to Tony Fadell. <i>TechCrunch</i>. <a href="https://techcrunch.com/2015/01/15/google-glass-exits-x-labs-as-explorer-program-shuts-down-team-now-reports-to-tony-fadell/">https://techcrunch.com/2015/01/15/google-glass-exits-x-labs-as-explorer-program-shuts-down-team-now-reports-to-tony-fadell/</a></li>
       <li>Sweller, J. (1988). Cognitive load during problem solving: Effects on learning. <i>Cognitive Science, 12</i>(2), 257&ndash;285. <a href="https://doi.org/10.1207/s15516709cog1202_4">https://doi.org/10.1207/s15516709cog1202_4</a></li>
       <li>Tierney, A. A., Gayre, G., Hoberman, B., Mattern, B., Ballesca, M., Kipnis, P., Liu, V., &amp; Lee, K. (2024). Ambient artificial intelligence scribes to alleviate the burden of clinical documentation. <i>NEJM Catalyst Innovations in Care Delivery, 5</i>(3). <a href="https://doi.org/10.1056/CAT.23.0404">https://doi.org/10.1056/CAT.23.0404</a></li>
+      <li>VoiceboxMD. (n.d.). <i>AI medical scribe for doctors: VB Virtual Scribe demo | Ambient clinical intelligence</i> [Video]. YouTube. <a href="https://www.youtube.com/watch?v=mPpnwg-BWZY">https://www.youtube.com/watch?v=mPpnwg-BWZY</a></li>
     </ul>
     <footer>ETEC 523 &middot; Mobile Intelligence &middot; UBC MET</footer>
   </section>
@@ -847,6 +916,20 @@
 </div>
 
 <script>
+  // click-to-load video: nothing is requested from YouTube until the reader presses play
+  Array.prototype.forEach.call(document.querySelectorAll('.video[data-yt]'), function (box) {
+    var btn = box.querySelector('.video-play');
+    btn.addEventListener('click', function () {
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + box.dataset.yt +
+        '?autoplay=1&rel=0&start=0' + (box.dataset.end ? '&end=' + box.dataset.end : '');
+      f.title = btn.getAttribute('aria-label');
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      box.replaceChild(f, btn);
+    });
+  });
+
   (function () {
     var started = Date.now();
     var events = 0;
@@ -1011,7 +1094,7 @@
 
     var SECTION_META = {
       analogs: { label: '01 Existing systems', pitch: 'the five other professions, because that is the whole feasibility case' },
-      load:    { label: '02 Thirty things to remember', pitch: 'the bit about 10:40, which is the reason I wrote any of this' },
+      load:    { label: '02 Decision fatigue', pitch: 'the bit about 10:40, which is the reason I wrote any of this' },
       layers:  { label: '03 What a room could sense', pitch: 'the four input layers, because that is the part worth arguing with' },
       when:    { label: '04 Why it is not here yet', pitch: 'the bottlenecks, because they are why this is a forecast and not a wish' },
       glasses: { label: '05 Who wears the glasses', pitch: 'the bit about who is wearing them, which is the one thing here that surprised me' },
