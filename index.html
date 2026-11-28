@@ -349,6 +349,23 @@
   }
   .cell.empty .who { color: var(--alert); }
   .cell .what { font-size: 14.5px; color: var(--ink-2); }
+  .cell-photo { margin: 4px 0 2px; }
+  .cell-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border: 1px solid var(--line);
+  }
+  .cell-photo figcaption {
+    margin-top: 5px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: .06em;
+    color: var(--muted);
+  }
+  .cell-photo figcaption a { color: var(--muted); }
 
   /* ---------- layer table ---------- */
 
@@ -781,8 +798,8 @@
       <div class="cell"><span class="who">Clinic</span><span class="what">Ambient scribes listen to the visit and draft the note (Tierney et al., 2024). The clinician can devote more attention to the patient.</span></div>
       <div class="cell"><span class="who">Ward</span><span class="what">Deterioration scoring watches every patient at once and tells one nurse who to see next and which patients need care most urgently (Escobar et al., 2020).</span></div>
       <div class="cell"><span class="who">Contact centre</span><span class="what">Real-time assist listens to a live call and coaches the agent mid-sentence while serving up key information to agents and managers (Brynjolfsson et al., 2025).</span></div>
-      <div class="cell"><span class="who">Cockpit</span><span class="what">Threshold alerting systems provide realtime visual telemetry to pilots who can keep their hands on the controls at all times.</span></div>
-      <div class="cell"><span class="who">Sideline</span><span class="what">Athlete telemetry reaches the coach or trainer, not the athlete. The data can be used to improve performance or prevent injury.</span></div>
+      <div class="cell"><span class="who">Cockpit</span><figure class="cell-photo"><img src="images/cockpit-hud.jpg" width="640" height="480" alt="Head-up display in an F/A-18C cockpit, with flight data projected over the view of an aircraft carrier deck ahead." loading="lazy"><figcaption>Photo: US Navy, public domain, via <a href="https://en.wikipedia.org/wiki/Head-up_display">Wikimedia Commons</a></figcaption></figure><span class="what">Threshold alerting systems provide realtime visual telemetry to pilots who can keep their hands on the controls at all times.</span></div>
+      <div class="cell"><span class="who">Sideline</span><figure class="cell-photo"><img src="images/sideline-tablet.jpg" width="900" height="1350" alt="A coach in a headset shows a football player data on a tablet on the sideline." loading="lazy" style="object-position: 50% 52%"><figcaption>Photo: <a href="https://www.pexels.com/photo/a-man-with-headphones-holding-a-tablet-beside-a-man-wearing-a-football-uniform-9539098/">Pexels</a></figcaption></figure><span class="what">Athlete telemetry reaches the coach or trainer, not the athlete. The data can be used to improve performance or prevent injury.</span></div>
       <div class="cell empty"><span class="who">Classroom</span><span class="what">Nothing live. One adult, thirty learners, and whatever the adult can hold in their head.</span></div>
     </div>
   </section>
