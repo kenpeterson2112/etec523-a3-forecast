@@ -716,7 +716,13 @@
   }
 
   .turn p { color: var(--ink); font-size: 16.5px; line-height: 1.5; margin: 0 0 12px; }
-  .turn p:last-child { margin-bottom: 0; color: var(--ink-2); font-size: 15px; }
+  .turn p:last-child { margin-bottom: 0; }
+  .turn + .turn { margin-top: 14px; border-color: var(--alert); }
+  .turn + .turn .label { color: var(--alert); }
+
+  ol.points { margin: 0 0 16px; padding-left: 2em; color: var(--ink-2); }
+  ol.points li { margin-bottom: 10px; padding-left: 4px; }
+  ol.points li::marker { font-family: var(--mono); color: var(--amber); font-size: .85em; }
 
   .inference {
     border-top: 1px solid var(--line-hot);
@@ -820,7 +826,7 @@
   </header>
 
   <section data-sec="analogs">
-    <span class="chan"><span class="num">CH 01</span><i>Current State in other Professions</i></span>
+    <span class="chan"><span class="num">CH 01</span></span>
     <h2>Existing Ambient Intelligence Systems</h2>
     <p>The examples below provide evidence that an Ambient Classroom Assistant is feasible. One of the fastest growing use cases in health care is ambient scribing tools that track conversations and other data inputs to help doctors and health care workers accurately track information in realtime (VoiceboxMD, n.d.).</p>
     <div class="feature">
@@ -846,92 +852,68 @@
   </section>
 
   <section data-sec="load">
-    <span class="chan"><span class="num">CH 02</span><i>The limits of working memory</i></span>
+    <span class="chan"><span class="num">CH 02</span></span>
     <h2>Data overwhelm and Decision Fatigue</h2>
     <p>Cognitive load theory (Sweller, 1988) applies as much to educators as it does to learners. Reducing distraction and giving students the appropriate amount of challenge are by now accepted and well established practices. However, teachers can benefit from the same approach, and would certainly be able to operate more effectively in an environment in which their cognitive load is reduced (Feldon, 2007). This actually raises a counterargument to the idea of an ambient assistant, because this new source of information might just add to the overwhelm, especially if it resides on a screen or is embedded in a pair of smart glasses.</p>
     <p>However, if the assistant allows teachers to offload data management and memory work, they can remain focused on the task at hand. For example, if you have conferences or discussions with several students during a lesson and each is at a different level of understanding, an assistant with access to a rubric and your planning documentation could update records instantly and allow the educator to move freely between conversations, trusting that their interactions would be catalogued and preserved for when they had the time and energy to analyze them and adjust their planning.</p>
   </section>
 
   <section data-sec="layers">
-    <span class="chan"><span class="num">CH 03</span><i>Input layers</i></span>
-    <span class="draft">Draft &middot; comment magnet</span>
-    <h2>What a room could sense</h2>
-    <p><strong>[Your words here.]</strong> Always listening is the least interesting and most legally fraught way to build this. Four layers, each with a different privacy cost and a different distance from today.</p>
+    <span class="chan"><span class="num">CH 03</span></span>
+    <h2>Input layers</h2>
+    <p>Audio tracking with realtime AI analysis is already commonplace on virtual meetings, but there are other layers that could be included in the dataset for an ambient classroom assistant.</p>
     <div class="layers">
       <div class="layer risk-high">
         <h3>Audio and speech</h3>
-        <p>Talk-time ratios, questioning patterns, who has not spoken. Decibel-only is nearly free; transcription is the hardest sell in a room full of minors.</p>
-        <div class="tags"><span class="tag">High privacy cost</span><span class="tag">Partly commercial</span></div>
+        <p>Talk-time ratios, questioning patterns, who has not spoken. Decibel-only is nearly free; transcription and tracking raise privacy concerns, so the source audio would need to be ephemeral.</p>
+        <div class="tags"><span class="tag">High privacy cost</span><span class="tag">Established</span></div>
       </div>
       <div class="layer risk-low">
         <h3>Digital activity</h3>
-        <p>Which prompt is open, where responses stalled, how long a task actually took. This already exists in the systems schools have bought.</p>
-        <div class="tags"><span class="tag">Low privacy cost</span><span class="tag">Here now</span></div>
+        <p>Which resource is open, where responses were sent or not, how long a task actually took. This already exists in the systems schools have bought but is often fragmented across platforms and tools.</p>
+        <div class="tags"><span class="tag">Low privacy cost</span><span class="tag">In classrooms today</span></div>
       </div>
       <div class="layer risk-low">
         <h3>Environment</h3>
-        <p>Occupancy, temperature, air quality, light. No personal data at all, and off-the-shelf hardware. The dull layer that quietly explains the 2pm slump.</p>
+        <p>Occupancy, temperature, air quality, light. No personal data at all, and off-the-shelf hardware. Dull on the surface but potentially useful if heat, humidity, lighting or other factors reach uncomfortable levels.</p>
         <div class="tags"><span class="tag">Near-zero privacy cost</span><span class="tag">Here now</span></div>
       </div>
       <div class="layer risk-high">
         <h3>Vision</h3>
-        <p>Posture, movement density, hand-raising, where the teacher stood. Research prototypes only (Ahuja et al., 2019), and the layer boards will refuse longest.</p>
+        <p>Posture, movement density, hand-raising, where the teacher stood. Research prototypes only (Ahuja et al., 2019), and the layer that would invite the most criticism.</p>
         <div class="tags"><span class="tag">Highest privacy cost</span><span class="tag">Research only</span></div>
       </div>
     </div>
   </section>
 
   <section data-sec="when">
-    <span class="chan"><span class="num">CH 04</span><i>Bottlenecks and enablers</i></span>
-    <span class="draft">Draft</span>
-    <h2>Why it is not here yet</h2>
-    <p><strong>[Your words here.]</strong> Three things hold it back: the signals live in systems that do not talk to each other, continuous multimodal capture is too slow and too expensive to send to the cloud, and nobody has the institutional appetite.</p>
-    <p>Three things resolve it: inference that runs on the device and discards the raw signal, small models trained on pedagogical patterns rather than general language, and sensor standards that let one assistant read a room it did not ship with.</p>
-  </section>
-
-  <section data-sec="glasses">
-    <span class="chan"><span class="num">CH 05</span><i>The interface</i></span>
-    <span class="draft">Draft &middot; the surprise</span>
-    <h2>The teacher wears the glasses</h2>
-    <p><strong>[Your words here.]</strong> Every prompt we have discussed has to land somewhere, and a phone in a teacher's hand is a teacher looking at a phone. The entire public argument about glasses in schools assumes the student is wearing them. Flip it.</p>
+    <span class="chan"><span class="num">CH 04</span></span>
+    <h2>Opportunities and Bottlenecks</h2>
+    <p>The technologies that would capture and report this kind of data (microphones, accelerometers, cameras, smartphones) are already in use in many classrooms, so this solution is hardly science fiction and the true barriers are not technical. The real barriers to this kind of tool finding a foothold in classrooms are:</p>
+    <ol class="points">
+      <li><strong>Data Fragmentation</strong> &ndash; the existing signals and datasets exist across multiple systems that do not talk to each other.</li>
+      <li><strong>Speed &amp; Cost</strong> &ndash; continuous multimodal capture is too slow and too expensive to send to the cloud for constant processing by an AI tool.</li>
+      <li><strong>Privacy &amp; Security</strong> &ndash; tracking this amount of data related to students and minors raises serious questions about surveillance, data security and access.</li>
+    </ol>
+    <p>Potential solutions to these challenges include:</p>
+    <ol class="points">
+      <li><strong>Platform Integration</strong> &ndash; constructing a contextual framework that allows all of these data sources to arrive at a single destination for storage and analysis.</li>
+      <li><strong>Localization</strong> &ndash; small models that can process the inputs without anything leaving the classroom.</li>
+      <li><strong>Responsible Data Stewardship</strong> &ndash; raw data is always scrubbed after processing, any analysis that leaves the classroom is anonymized, and all systems are held to rigorous standards that prioritize student privacy.</li>
+    </ol>
   </section>
 
   <section data-sec="trade">
-    <span class="chan"><span class="num">CH 06</span><i>The trade</i></span>
-    <span class="draft">Draft &middot; carries the argument</span>
+    <span class="chan"><span class="num">CH 05</span></span>
     <h2>The relief and the record are the same signal</h2>
     <p><strong>[Your words here.]</strong> On-device processing protects students. It does nothing for teachers, because the metadata is the surveillance. A system can discard every second of audio and still produce a permanent record of how long you talked, where you stood, and who you never got to.</p>
     <p>The union objection is not recording. It is continuous derived metrics about a professional, generated by a system that professional did not choose.</p>
   </section>
 
-  <section data-sec="watch">
-    <span class="chan"><span class="num">CH 07</span><i>Watch list</i></span>
-    <span class="draft">Draft &middot; the takeaway</span>
-    <h2>How you will know if I am right</h2>
-    <div class="spine">
-      <div class="mark">
-        <span class="yr">BY 2029</span>
-        <p>Board AI policy written by procurement rather than by academic integrity. Wifi specified per room. A vendor shipping processing that never leaves the building.</p>
-      </div>
-      <div class="mark">
-        <span class="yr">BY 2030</span>
-        <p>Teachers buying their own glasses, the way they bought their own smartphones a decade before any board had a policy.</p>
-      </div>
-      <div class="mark">
-        <span class="yr">BY 2032</span>
-        <p>Collective agreement language about derived classroom metrics. The first grievance. A classroom talk analytics product moving from post-lesson review (Demszky et al., 2024) to live, in-lesson prompting.</p>
-      </div>
-    </div>
-    <div class="falsify">
-      <h3>And how you will know I am wrong</h3>
-      <p>A serious breach involving classroom audio. A province banning capture outright. Glasses stalling a second time the way they did after 2013 (Lardinois, 2015). Or the simplest one: the cost per classroom never pencils out.</p>
-    </div>
-  </section>
-
   <section id="reveal" data-sec="reveal">
-    <span class="chan"><span class="num">CH 08</span><i>One more thing</i></span>
-    <h2>While you were reading</h2>
-    <p>You were told at the top of this page. You probably forgot inside of a minute. That is not a trick, it is the mechanism: every ambient system arrives with a notice nobody finishes reading.</p>
+    <span class="chan"><span class="num">CH 06</span></span>
+    <h2>Your Analytics</h2>
+    <p>You were told at the top of this page that your actions would be tracked. Here is a basic readout of the actions that a simple webpage was able to track:</p>
 
     <div class="panel-box">
       <div class="panel-head"><span>Session readout</span><span id="r-stamp">--</span></div>
@@ -961,32 +943,25 @@
 
     <p style="margin-top:18px"><strong>Notice what just happened there.</strong> Nobody measured your attention. A machine decided what attention looks like, named it, scored it out of 100, and showed you the number as though it were a fact about you. Those three words are my inventions. So are the formulas. That is the part worth worrying about, and it is the part that will arrive without anyone voting on it.</p>
 
-    <p class="integrity">INTEGRITY: everything above was computed in your browser. No network request, no storage, no analytics, no third-party fonts. Refresh and it is gone. The photo is served from this site, and the video loads from YouTube only if you press play. The source is public, and you are welcome to check.</p>
+    <p class="integrity">INTEGRITY: everything above was computed in your browser. No network request, no storage, no analytics, no third-party fonts. Refresh and it is gone.</p>
 
     <div class="turn">
-      <span class="label">Now put it in a classroom</span>
-      <p>Imagine you could see this for a reading you assigned. Not a quiz score afterwards, but which paragraphs your students moved through quickly and which ones they stayed with. Would you use it to send them back to the part they skipped?</p>
-      <p>And the harder half: imagine someone could see the same map of how you taught, and you were not the one who decided which parts got measured.</p>
+      <span class="label">Imagine this in a Classroom</span>
+      <p>Imagine you could see this for a reading you assigned and for every student in the class. An ambient assistant could see which paragraphs your students moved through quickly, maybe too quickly, and which ones they stayed with. It could alert teachers if certain thresholds weren't met or were exceeded. Would you use it to send them back to the part they skipped?</p>
+    </div>
+
+    <div class="turn">
+      <span class="label">The Admin Layer</span>
+      <p>And now for the most uncomfortable question: imagine if a school principal could see the same data mapped to how you taught. Even if this was positioned as information to help support teachers or inform professional learning, would you be comfortable with this? Would the knowledge that your teaching was being surveilled impact your practice?</p>
     </div>
   </section>
 
   <section data-sec="caveat">
-    <span class="chan"><span class="num">CH 09</span><i>A caveat</i></span>
-    <span class="draft">Draft</span>
-    <h2>A forecast, not an endorsement</h2>
-    <p>I personally believe that some version of an always-on classroom assistant is coming, and sooner than most of us expect. A lot of adjacent professions already have one. That part I am fairly confident about.</p>
-    <p>I am much less confident it will be good for education. Some versions I would welcome in my son's Grade 6 classroom tomorrow. Others I would fight. The difference comes down to design decisions nobody is making in public yet.</p>
-    <p>So this is a forecast rather than a pitch. I am interested in it precisely because it is probably coming in some form, and because the form is still open. The time to interrogate a technology is while its shape is undecided, not after the purchase orders go out.</p>
-  </section>
-
-  <section data-sec="close">
-    <span class="chan"><span class="num">CH 10</span><i>Close</i></span>
-    <span class="draft">Draft</span>
-    <h2>Still open</h2>
-    <p><strong>[Your words here.]</strong> Short return to the caveat, then the question.</p>
-    <div class="ask">
-      <p>Looking at the four input layers: which one would you accept in your own classroom tomorrow, and which one would you refuse outright? I am more interested in where you draw the line than whether you draw it.</p>
-    </div>
+    <span class="chan"><span class="num">CH 07</span></span>
+    <h2>This is a forecast, not an endorsement</h2>
+    <p>I personally believe that some version of an always-on classroom assistant is coming, and sooner than most of us expect. A lot of adjacent professions already have these tools and the technologies are well within reach now, so I am fairly confident that we'll see these by the early 2030s.</p>
+    <p>I am much less confident it will be good for education. Some versions I would welcome in my son's Grade 6 classroom tomorrow, but others I would fight. The difference comes down to design decisions and how the data is ultimately used.</p>
+    <p>I am interested in it precisely because it is probably coming in some form, and because the form is still open. The time to interrogate a technology is while its shape is undecided, not after the purchase orders go out.</p>
   </section>
 
   <section data-sec="refs" class="refs">
@@ -995,11 +970,9 @@
       <li>Ahuja, K., Kim, D., Xhakaj, F., Varga, V., Xie, A., Zhang, S., Townsend, J. E., Harrison, C., Ogan, A., &amp; Agarwal, Y. (2019). EduSense: Practical classroom sensing at scale. <i>Proceedings of the ACM on Interactive, Mobile, Wearable and Ubiquitous Technologies, 3</i>(3), Article 71. <a href="https://doi.org/10.1145/3351229">https://doi.org/10.1145/3351229</a></li>
       <li>Arm. (n.d.). <i>What is ambient intelligence?</i> [Video]. YouTube. <a href="https://www.youtube.com/watch?v=r5-t9DnqLnI">https://www.youtube.com/watch?v=r5-t9DnqLnI</a></li>
       <li>Brynjolfsson, E., Li, D., &amp; Raymond, L. (2025). Generative AI at work. <i>The Quarterly Journal of Economics, 140</i>(2), 889&ndash;942. <a href="https://doi.org/10.1093/qje/qjae044">https://doi.org/10.1093/qje/qjae044</a></li>
-      <li>Demszky, D., Liu, J., Hill, H. C., Jurafsky, D., &amp; Piech, C. (2024). Can automated feedback improve teachers' uptake of student ideas? Evidence from a randomized controlled trial in a large-scale online course. <i>Educational Evaluation and Policy Analysis, 46</i>(3), 483&ndash;505. <a href="https://doi.org/10.3102/01623737231169270">https://doi.org/10.3102/01623737231169270</a></li>
       <li>Escobar, G. J., Liu, V. X., Schuler, A., Lawson, B., Greene, J. D., &amp; Kipnis, P. (2020). Automated identification of adults at risk for in-hospital clinical deterioration. <i>New England Journal of Medicine, 383</i>(20), 1951&ndash;1960. <a href="https://doi.org/10.1056/NEJMsa2001090">https://doi.org/10.1056/NEJMsa2001090</a></li>
       <li>Feldon, D. F. (2007). Cognitive load and classroom teaching: The double-edged sword of automaticity. <i>Educational Psychologist, 42</i>(3), 123&ndash;137. <a href="https://doi.org/10.1080/00461520701416173">https://doi.org/10.1080/00461520701416173</a></li>
       <li>Klein, A. (2021, December 6). 1,500 decisions a day (at least!): How teachers cope with a dizzying array of questions. <i>Education Week</i>. <a href="https://www.edweek.org/teaching-learning/1-500-decisions-a-day-at-least-how-teachers-cope-with-a-dizzying-array-of-questions/2021/12">https://www.edweek.org/teaching-learning/1-500-decisions-a-day-at-least-how-teachers-cope-with-a-dizzying-array-of-questions/2021/12</a></li>
-      <li>Lardinois, F. (2015, January 15). Google Glass Explorer program shuts down, team now reports to Tony Fadell. <i>TechCrunch</i>. <a href="https://techcrunch.com/2015/01/15/google-glass-exits-x-labs-as-explorer-program-shuts-down-team-now-reports-to-tony-fadell/">https://techcrunch.com/2015/01/15/google-glass-exits-x-labs-as-explorer-program-shuts-down-team-now-reports-to-tony-fadell/</a></li>
       <li>Sweller, J. (1988). Cognitive load during problem solving: Effects on learning. <i>Cognitive Science, 12</i>(2), 257&ndash;285. <a href="https://doi.org/10.1207/s15516709cog1202_4">https://doi.org/10.1207/s15516709cog1202_4</a></li>
       <li>Tierney, A. A., Gayre, G., Hoberman, B., Mattern, B., Ballesca, M., Kipnis, P., Liu, V., &amp; Lee, K. (2024). Ambient artificial intelligence scribes to alleviate the burden of clinical documentation. <i>NEJM Catalyst Innovations in Care Delivery, 5</i>(3). <a href="https://doi.org/10.1056/CAT.23.0404">https://doi.org/10.1056/CAT.23.0404</a></li>
       <li>VoiceboxMD. (n.d.). <i>AI medical scribe for doctors: VB Virtual Scribe demo | Ambient clinical intelligence</i> [Video]. YouTube. <a href="https://www.youtube.com/watch?v=mPpnwg-BWZY">https://www.youtube.com/watch?v=mPpnwg-BWZY</a></li>
@@ -1158,7 +1131,7 @@
 
     function scores() {
       var mins = elapsed() / 60000;
-      var bodyDwell = ['caveat','analogs','load','layers','when','glasses','trade','watch','close']
+      var bodyDwell = ['caveat','analogs','load','layers','when','trade']
         .reduce(function (a, k) { return a + (dwell[k] || 0); }, 0);
       var seen = Object.keys(dwell).filter(function (k) { return (dwell[k] || 0) > 1200; }).length;
 
@@ -1206,7 +1179,7 @@
 
     /* ---------- attention map ---------- */
 
-    var MAP_ORDER = ['analogs','load','layers','when','glasses','trade','watch','caveat'];
+    var MAP_ORDER = ['analogs','load','layers','when','trade','caveat'];
 
     // give every mapped section an id so the map can link to it,
     // and drop a return link into each channel header
@@ -1228,12 +1201,10 @@
     var SECTION_META = {
       analogs: { label: '01 Existing systems', pitch: 'the five other professions, because that is the whole feasibility case' },
       load:    { label: '02 Decision fatigue', pitch: 'the bit about moving between student conferences, which is the reason I wrote any of this' },
-      layers:  { label: '03 What a room could sense', pitch: 'the four input layers, because that is the part worth arguing with' },
-      when:    { label: '04 Why it is not here yet', pitch: 'the bottlenecks, because they are why this is a forecast and not a wish' },
-      glasses: { label: '05 Who wears the glasses', pitch: 'the bit about who is wearing them, which is the one thing here that surprised me' },
-      trade:   { label: '06 The trade', pitch: 'the trade, because it is the only part of this I am certain about' },
-      watch:   { label: '07 Watch list', pitch: 'the watch list, so you can come back in 2029 and tell me I was wrong' },
-      caveat:  { label: '09 A caveat', pitch: 'the caveat, because it tells you what this is and is not' }
+      layers:  { label: '03 Input layers', pitch: 'the four input layers, because that is the part worth arguing with' },
+      when:    { label: '04 Opportunities and bottlenecks', pitch: 'the bottlenecks, because they are why this is a forecast and not a wish' },
+      trade:   { label: '05 The trade', pitch: 'the trade, because it is the only part of this I am certain about' },
+      caveat:  { label: '07 Not an endorsement', pitch: 'the last section, because it tells you what this is and is not' }
     };
 
     var WORDS = {};
@@ -1279,7 +1250,7 @@
       var read = scored.filter(function (x) { return x.t >= 0.8; });
 
       // what to send them back to, in order of what I actually want read
-      var priority = ['trade', 'load', 'layers', 'glasses', 'watch', 'analogs', 'when', 'caveat'];
+      var priority = ['trade', 'load', 'layers', 'analogs', 'when', 'caveat'];
       var pick = null;
       for (var i = 0; i < priority.length; i++) {
         var cand = scored.filter(function (x) { return x.k === priority[i]; })[0];
@@ -1287,8 +1258,8 @@
       }
 
       var msg;
-      if (skimmed.length === 0 && read.length >= 6) {
-        msg = 'You actually read the whole thing, which almost nobody does. Nothing to send you back to, so instead: the part I would most like to be wrong about is the trade in section 06.';
+      if (skimmed.length === 0 && read.length >= 5) {
+        msg = 'You actually read the whole thing, which almost nobody does. Nothing to send you back to, so instead: the part I would most like to be wrong about is the trade in section 05.';
       } else if (skimmed.length === 0) {
         msg = 'Nothing obviously skipped. If you have another minute, ' + SECTION_META[(pick || scored[0]).k].pitch + '.';
       } else {
@@ -1337,7 +1308,6 @@
       html += row('Times you scrolled back up', reversals);
       html += row('Sections you skimmed past', fastSkims > 0 ? fastSkims + ' bursts' : 'none detected');
       html += row('Time on the privacy argument', fmt(dwell.trade || 0));
-      html += row('Time on the timeline', fmt(dwell.watch || 0));
       html += row('Time away in another app', awayMs > 1500 ? fmt(awayMs) : 'none');
       html += row('Taps', taps);
       if (pausedTotal() > 0) {
@@ -1352,7 +1322,7 @@
     function infer() {
       var d = dwell.disclosure || 0;
       var trade = dwell.trade || 0;
-      var watch = dwell.watch || 0;
+      var when = dwell.when || 0;
       var layers = dwell.layers || 0;
 
       if (pausedTotal() > 0) {
@@ -1361,13 +1331,13 @@
       if (d < 4000) {
         return 'You spent ' + fmt(d) + ' on the notice telling you this page was watching, and then kept reading anyway. That is the entire consent model for ambient technology, demonstrated on yourself.';
       }
-      if (watch > trade * 1.4) {
-        return 'You lingered on the timeline and moved quickly through the privacy argument. Reading you as someone who has accepted that this is coming and wants to know when, not whether.';
+      if (when > trade * 1.4) {
+        return 'You lingered on the bottlenecks and moved quickly through the privacy argument. Reading you as someone who has accepted that this is coming and wants to know how, not whether.';
       }
-      if (trade > watch * 1.4) {
-        return 'You spent longer on what this costs teachers than on when it arrives. Reading you as someone with a stake in the room rather than in the roadmap.';
+      if (trade > when * 1.4) {
+        return 'You spent longer on what this costs teachers than on what stands in its way. Reading you as someone with a stake in the room rather than in the roadmap.';
       }
-      if (layers > trade && layers > watch) {
+      if (layers > trade && layers > when) {
         return 'Your attention went to what a room could sense. Reading you as a builder rather than a critic, which is a useful disposition and also exactly how this gets built without anyone asking whether it should.';
       }
       return 'Even attention across the argument. No strong signal, which is itself a finding: a system like this would keep watching until it had one.';
