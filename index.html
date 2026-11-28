@@ -349,6 +349,35 @@
   }
   .cell.empty .who { color: var(--alert); }
   .cell .what { font-size: 14.5px; color: var(--ink-2); }
+
+  .feature {
+    border: 1px solid var(--line-hot);
+    border-top: 2px solid var(--amber);
+    background: var(--panel);
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .feature .who {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .feature .what { font-size: 15.5px; color: var(--ink-2); }
+  .feature .video { margin: 8px 0 0; }
+
+  .subhead {
+    margin: 26px 0 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
   .cell-photo { margin: 4px 0 2px; }
   .cell-photo img {
     display: block;
@@ -793,11 +822,23 @@
   <section data-sec="analogs">
     <span class="chan"><span class="num">CH 01</span><i>Current State in other Professions</i></span>
     <h2>Existing Ambient Intelligence Systems</h2>
-    <p>The examples below provide evidence that an Ambient Classroom Assistant is feasible. One of the fastest growing use cases in health care is <a href="https://www.youtube.com/watch?v=mPpnwg-BWZY">ambient scribing tools</a> that track conversations and other data inputs to help doctors and health care workers accurately track information in realtime (VoiceboxMD, n.d.).</p>
+    <p>The examples below provide evidence that an Ambient Classroom Assistant is feasible. One of the fastest growing use cases in health care is ambient scribing tools that track conversations and other data inputs to help doctors and health care workers accurately track information in realtime (VoiceboxMD, n.d.).</p>
+    <div class="feature">
+      <span class="who">Clinic</span>
+      <span class="what">Ambient scribes listen to the visit and draft the note (Tierney et al., 2024). The clinician can devote more attention to the patient.</span>
+      <div class="video" data-yt="mPpnwg-BWZY">
+        <button type="button" class="video-play" aria-label="Play video: AI Medical Scribe for Doctors, VB Virtual Scribe demo (VoiceboxMD)">
+          <span class="video-icon" aria-hidden="true"></span>
+          <span class="video-title">AI Medical Scribe for Doctors: VB Virtual Scribe Demo</span>
+          <span class="video-meta">VoiceboxMD &middot; YouTube</span>
+          <span class="video-note">Loads from YouTube only when you press play</span>
+        </button>
+      </div>
+    </div>
+    <h3 class="subhead">Other Examples</h3>
     <div class="grid">
-      <div class="cell"><span class="who">Clinic</span><span class="what">Ambient scribes listen to the visit and draft the note (Tierney et al., 2024). The clinician can devote more attention to the patient.</span></div>
-      <div class="cell"><span class="who">Ward</span><span class="what">Deterioration scoring watches every patient at once and tells one nurse who to see next and which patients need care most urgently (Escobar et al., 2020).</span></div>
-      <div class="cell"><span class="who">Contact centre</span><span class="what">Real-time assist listens to a live call and coaches the agent mid-sentence while serving up key information to agents and managers (Brynjolfsson et al., 2025).</span></div>
+      <div class="cell"><span class="who">Hospital wards</span><span class="what">Deterioration scoring watches every patient at once and tells one nurse who to see next and which patients need care most urgently (Escobar et al., 2020).</span></div>
+      <div class="cell"><span class="who">Call centre</span><span class="what">Real-time assist listens to a live call and coaches the agent mid-sentence while serving up key information to agents and managers (Brynjolfsson et al., 2025).</span></div>
       <div class="cell"><span class="who">Cockpit</span><figure class="cell-photo"><img src="images/cockpit-hud.jpg" width="640" height="480" alt="Head-up display in an F/A-18C cockpit, with flight data projected over the view of an aircraft carrier deck ahead." loading="lazy"><figcaption>Photo: US Navy, public domain, via <a href="https://en.wikipedia.org/wiki/Head-up_display">Wikimedia Commons</a></figcaption></figure><span class="what">Threshold alerting systems provide realtime visual telemetry to pilots who can keep their hands on the controls at all times.</span></div>
       <div class="cell"><span class="who">Sideline</span><figure class="cell-photo"><img src="images/sideline-tablet.jpg" width="900" height="1350" alt="A coach in a headset shows a football player data on a tablet on the sideline." loading="lazy" style="object-position: 50% 52%"><figcaption>Photo: <a href="https://www.pexels.com/photo/a-man-with-headphones-holding-a-tablet-beside-a-man-wearing-a-football-uniform-9539098/">Pexels</a></figcaption></figure><span class="what">Athlete telemetry reaches the coach or trainer, not the athlete. The data can be used to improve performance or prevent injury.</span></div>
       <div class="cell empty"><span class="who">Classroom</span><span class="what">Nothing live. One adult, thirty learners, and whatever the adult can hold in their head.</span></div>
