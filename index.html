@@ -112,6 +112,40 @@
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 
   .readout { display: flex; gap: 14px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- tracking opt-out ---------- */
+
+  .resume {
+    font: inherit;
+    letter-spacing: .02em;
+    text-transform: inherit;
+    color: var(--alert);
+    background: none;
+    border: 1px dashed var(--alert);
+    border-radius: 2px;
+    padding: 2px 6px;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    text-align: left;
+  }
+  .resume:hover, .resume:focus-visible { background: rgba(224, 115, 107, .12); outline: none; }
+  body.tracking-off .status .live, body.tracking-off .status .readout { display: none; }
+  @media (max-width: 380px) { .resume { font-size: 9.5px; letter-spacing: 0; } }
+
+  .optout {
+    font: inherit;
+    color: var(--cyan);
+    background: none;
+    border: 0;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .optout:focus-visible { outline: 1px solid var(--cyan); outline-offset: 2px; }
   .readout span b { color: var(--ink-2); font-weight: 500; }
 
   /* ---------- layout ---------- */
@@ -702,6 +736,7 @@
 <div class="status">
   <div class="status-inner">
     <span class="live"><span class="dot"></span>Sensing</span>
+    <button type="button" class="resume" id="resume" hidden>Tracking disabled - click here to reinitiate</button>
     <span class="readout">
       <span>T <b id="r-time">0:00</b></span>
       <span>Depth <b id="r-depth">0%</b></span>
@@ -720,8 +755,8 @@
       <img src="images/classroom.jpg" width="1400" height="933" alt="A high school English teacher leans over a student's desk to check their work." loading="lazy">
       <figcaption>Photo: Allison Shelley/The Verbatim Agency for EDUimages, <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a></figcaption>
     </figure>
-    <p class="deck">Many other professions have similarly hectic and high pressure environments, such as emergency rooms, 24/7 call centers, and fighter jet cockpits. The difference is that the humans operating in these environments increasingly have <strong>automated, ambient systems</strong> feeding them intelligence so they can make well-informed decisions in realtime based on data and telemetrics while teachers are still mostly on their own.</p>
-    <p class="deck">The first 1:22 of this video provides a nice succinct overview of what an Ambient Intelligent Assistance does and how it leverages a mesh of devices to collect data and serve it up to the user (Arm, n.d.).</p>
+    <p class="deck">Many other professions have similarly hectic and high pressure environments, such as emergency rooms, 24/7 call centers, and fighter jet cockpits. The difference is that the humans operating in these environments increasingly have <strong>automated, ambient systems</strong> feeding them intelligence so they can make well-informed decisions in realtime based on data and telemetrics; meanwhile teachers are still mostly on their own.</p>
+    <p class="deck">The first 1:22 of this video provides a nice succinct overview of what an Ambient Intelligent Assistance does and how it uses a mesh of local devices to collect data and serve it up to the user (Arm, n.d.).</p>
     <div class="video" data-yt="r5-t9DnqLnI" data-end="82">
       <button type="button" class="video-play" aria-label="Play video: What is Ambient Intelligence? (Arm), first 1:22">
         <span class="video-icon" aria-hidden="true"></span>
@@ -733,7 +768,8 @@
     <p class="deck">This forecast will explore the likelihood, benefits, and risks of systems like these becoming available to teachers and what it might mean for teaching as a profession.</p>
 
     <div class="disclose" data-sec="disclosure">
-      <b>Full Disclosure:</b> this page is tracking your interactions with it. Nothing is stored, nothing is transmitted anywhere, and it all disappears when you close the tab. At the end of this page, you will see what it collected and understand why I included this.
+      <b>Full Disclosure:</b> this page is tracking your interactions with it. Nothing is stored, nothing is transmitted anywhere, and it all disappears when you close the tab. At the end of this page, you will see what it collected and hopefully understand why I included this functionality.
+      <span id="optout-line">If you are uncomfortable with this, you can <button type="button" class="optout" id="optout">click here</button> to disable the tracking.</span>
     </div>
   </header>
 
@@ -943,6 +979,9 @@
     var dwell = {};
     var visible = {};
     var revealSeen = false;
+    var tracking = true;
+    var pausedMs = 0;
+    var pausedSince = null;
 
     var secs = Array.prototype.slice.call(document.querySelectorAll('[data-sec]'));
     secs.forEach(function (el) { dwell[el.dataset.sec] = 0; });
@@ -950,9 +989,42 @@
     function tickDwell() {
       var now = Date.now();
       Object.keys(visible).forEach(function (k) {
-        if (visible[k]) { dwell[k] += now - (visible[k].t || now); visible[k].t = now; }
+        if (visible[k]) {
+          if (tracking) { dwell[k] += now - (visible[k].t || now); }
+          visible[k].t = now;
+        }
       });
     }
+
+    function pausedTotal() { return pausedMs + (pausedSince ? Date.now() - pausedSince : 0); }
+
+    /* ---------- opt-out: while off, nothing is counted at all ---------- */
+
+    var optLine = document.getElementById('optout-line');
+    var resumeBtn = document.getElementById('resume');
+
+    function setTracking(on) {
+      if (on === tracking) { return; }
+      tickDwell();
+      tracking = on;
+      if (on) {
+        pausedMs += Date.now() - pausedSince;
+        pausedSince = null;
+      } else {
+        pausedSince = Date.now();
+      }
+      document.body.classList.toggle('tracking-off', !on);
+      resumeBtn.hidden = on;
+      optLine.innerHTML = on
+        ? 'If you are uncomfortable with this, you can <button type="button" class="optout" id="optout">click here</button> to disable the tracking.'
+        : 'Tracking is off. Nothing is being counted. <button type="button" class="optout" id="optout">Click here</button> to turn it back on.';
+      if (revealSeen) { render(); }
+    }
+
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('#optout')) { e.stopPropagation(); setTracking(!tracking); }
+    }, true);
+    resumeBtn.addEventListener('click', function (e) { e.stopPropagation(); setTracking(true); });
 
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (entries) {
@@ -961,14 +1033,14 @@
           var k = e.target.dataset.sec;
           if (e.isIntersecting) {
             visible[k] = { t: now };
-            events++;
+            if (tracking) { events++; }
             if (k === 'reveal' && !revealSeen) {
               revealSeen = true;
               document.body.classList.add('seen-reveal');
               render();
             }
           } else if (visible[k]) {
-            dwell[k] += now - visible[k].t;
+            if (tracking) { dwell[k] += now - visible[k].t; }
             visible[k] = null;
           }
         });
@@ -980,6 +1052,7 @@
     window.addEventListener('scroll', function () {
       var y = window.scrollY;
       var now = Date.now();
+      if (!tracking) { lastScrollT = now; lastY = y; return; }
       var dt = Math.max(now - lastScrollT, 1);
       var v = Math.abs(y - lastY) / dt;
       if (v > 3) { fastSkims++; }
@@ -993,9 +1066,10 @@
       events++;
     }, { passive: true });
 
-    document.addEventListener('click', function () { taps++; events++; });
+    document.addEventListener('click', function () { if (tracking) { taps++; events++; } });
 
     document.addEventListener('visibilitychange', function () {
+      if (!tracking) { return; }
       if (document.hidden) { awaySince = Date.now(); tickDwell(); }
       else if (awaySince) { awayMs += Date.now() - awaySince; awaySince = null; }
     });
@@ -1006,10 +1080,11 @@
       return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
     }
 
-    function elapsed() { return Date.now() - started - awayMs; }
+    function elapsed() { return Date.now() - started - awayMs - pausedTotal(); }
 
     setInterval(function () {
       tickDwell();
+      if (!tracking) { return; }
       var t = Math.round(elapsed() / 1000);
       document.getElementById('r-time').textContent = Math.floor(t / 60) + ':' + ('0' + (t % 60)).slice(-2);
       document.getElementById('r-depth').textContent = maxDepth + '%';
@@ -1207,6 +1282,9 @@
       html += row('Time on the timeline', fmt(dwell.watch || 0));
       html += row('Time away in another app', awayMs > 1500 ? fmt(awayMs) : 'none');
       html += row('Taps', taps);
+      if (pausedTotal() > 0) {
+        html += row('Time with tracking switched off', fmt(pausedTotal()) + (tracking ? '' : ' (still off)'));
+      }
       html += row('Read at', now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
       box.innerHTML = html;
 
@@ -1219,6 +1297,9 @@
       var watch = dwell.watch || 0;
       var layers = dwell.layers || 0;
 
+      if (pausedTotal() > 0) {
+        return 'You switched the tracking off for ' + fmt(pausedTotal()) + '. Most ambient systems never offer that button, and the ones that do rarely put it where you will find it.';
+      }
       if (d < 4000) {
         return 'You spent ' + fmt(d) + ' on the notice telling you this page was watching, and then kept reading anyway. That is the entire consent model for ambient technology, demonstrated on yourself.';
       }
